@@ -4,9 +4,9 @@ StateSort is a stable hybrid comparison-based sorting algorithm, with O(lg(n)) t
 
 In my tests, it runs significantly faster than other sorts, <mark>9% faster</mark> than both std::sort and std::stable_sort sorting one million integers.
 
-![Race Results](.\RaceResults_2024-12-29_12-38.txt.svg)
+![Race Results](./RaceResults_2024-12-29_12-38.txt.svg)
 
-![Race Results](.\RaceResults_2024-12-29_12-38.txt.log.svg)
+![Log Race Results](./RaceResults_2024-12-29_12-38.txt.log.svg)
 
 ##### How It Works
 
@@ -19,7 +19,7 @@ StateSort seems to do relatively well on non-random, possibly more real world, d
 
 **Sorts in Microseconds by Data Arrangement, Sort, and Number of Elements**
 
-|                   |                  | 95                | 1000              | 95499                 | 1000000                |
+|                   |                  | 95                | 1,000             | 95,499                | 1,000,000              |
 |:-----------------:| ----------------:| -----------------:| -----------------:| ---------------------:| ----------------------:|
 |                   |                  |                   |                   |                       |                        |
 | **Random**        | MergeSort        | 0.91              | 27.16             | 6,272.40              | 80,049.30              |
