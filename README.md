@@ -4,6 +4,8 @@ StateSort is a stable hybrid comparison-based sorting algorithm, with O(lg(n)) t
 
 In my tests, it runs significantly faster than other sorts, <mark>9% faster</mark> than both std::sort and std::stable_sort at sorting one million integers.
 
+(And, yes, std::stable_sort is consistantly running faster than std::sort. (Of course you can easily check this yourself!))
+
 ![Race Results](./RaceResults_2024-12-29_12-38.txt.svg)
 
 ![Log Race Results](./RaceResults_2024-12-29_12-38.txt.log.svg)
