@@ -261,7 +261,7 @@ int TestSortForOrderAndStability( )
         for ( int i = 0; i < NumElements; i++ )
         {
             //V[i] = W[i] = NumElements - 1 - i;
-            V[i] = W[i] = ( MersenneTwister() % NumElements ) + i / 1'000'000;
+            V[i] = W[i] = ( MersenneTwister() % NumElements ) + i / 1'000'000.0;
         }
 
 
