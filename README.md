@@ -4,9 +4,9 @@ StateSort is a stable hybrid comparison-based sorting algorithm I have developed
 
 It runs **at least 8% faster than** any stable sort I have tested against, including hybrid **merge/insertion sort, and Windows and Ubuntu std::stable_sort**, at sorting one million random integers. I know this is a bold claim and so I invite your feedback. You can **test it yourself** easily with just `race.sh` or `race.bat`, `StableSortVsStateSort.cpp`, and `StateSort.h` provided in the `race` folder.
 
-![Race Results](file://C:\Users\jober\Desktop\make\working\RaceResults_2024-12-29_12-38.txt.svg)
+![Race Results](./RaceResults_2024-12-29_12-38.txt.svg)
 
-![Log Race Results](file://C:\Users\jober\Desktop\make\working\RaceResults_2024-12-29_12-38.txt.log.svg)
+![Log Race Results](./RaceResults_2024-12-29_12-38.txt.log.svg)
 
 ### How It Works
 
