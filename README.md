@@ -1,6 +1,6 @@
 # StateSort
 
-StateSort is a stable hybrid comparison-based sorting algorithm I have developed, with, I believe, O(n log(n)) time complexity and O(n) space complexity.
+StateSort is a stable hybrid comparison-based sorting algorithm I have developed, with O(n log(n)) time complexity and O(n) space complexity.
 
 It runs **at least 8% faster than** any stable sort I have tested against, including hybrid **merge/insertion sort, and Windows and Ubuntu std::stable_sort**, at sorting one million random integers. I know this is a bold claim and so I invite your feedback. You can **test it yourself** easily with just `race.sh` or `race.bat`, `StableSortVsStateSort.cpp`, and `StateSort.h` provided in the `race` folder.
 
