@@ -144,8 +144,8 @@
     <ClCompile Include="TestSpeed.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StateSort\OtherSorts.h" />
-    <ClInclude Include="..\StateSort\StateSort.h" />
+    <ClInclude Include="..\..\StateSort\OtherSorts.h" />
+    <ClInclude Include="..\..\StateSort\StateSort.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

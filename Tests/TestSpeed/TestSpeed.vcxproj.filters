@@ -20,10 +20,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\StateSort\StateSort.h">
+    <ClInclude Include="..\..\StateSort\OtherSorts.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\StateSort\OtherSorts.h">
+    <ClInclude Include="..\..\StateSort\StateSort.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
