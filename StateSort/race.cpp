@@ -1,5 +1,7 @@
 #include <algorithm>
 #include <chrono>
+#include <float.h>
+#include <stdio.h>
 
 #define SORT_ELEMENT  int
 #include "StateSort.h"
