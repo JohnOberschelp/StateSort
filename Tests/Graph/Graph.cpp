@@ -1,7 +1,7 @@
 
 //        BSD 3-Clause License
 //
-//        Copyright (c) 2024, John Oberschelp
+//        Copyright (c) 2024-2025, John Oberschelp
 //
 //        Redistribution and use in source and binary forms, with or without
 //        modification, are permitted provided that the following conditions are met:
@@ -46,27 +46,21 @@ const char* SortNames[] = {
     "HeapSort",
     "ShellSort",
     "MergeSort",
-    "std::sort", 
+    "StateSort",
     "std::stable_sort",
-    "StateSort", 0 };
+    "std::sort",
+};
 
-typedef enum {
-  HEAP_SORT       = 0,
-  Shell_SORT       = 1,
-  MERGE_SORT      = 2,
-  STD_SORT        = 3,
-  STD_STABLE_SORT = 4,
-  STATE_SORT      = 5,
-} SORT_TYPE ; 
-
+//////////////////////////////////////////////////////////////////////
 
 const char* SortColors[] = {
-    "black",
-    "gray",
-    "purple",
     "blue",
     "orange",
-    "green", 0 };
+    "red",
+    "green",
+    "magenta",
+    "purple",
+ 0 };
 
 //////////////////////////////////////////////////////////////////////
 
@@ -76,7 +70,8 @@ const char* DataArrangementNames[] = {
     "Random",
     "Ascending",
     "Descending",
-    "A_80_R_20", 0 };  //  First 80% Ascending, last 20% random.  How about Nearly Sorted, Few Unique?
+    "A_80_R_20", 0 };  //  First 80% Ascending, last 20% random, simulating an append.
+                       //  How about Nearly Sorted, Few Unique?
 
 typedef enum {
     RANDOM            = 0,
@@ -180,7 +175,7 @@ int GraphLogarithmic( const char* DataFileName )
     // Define some SVG graph constants.
     int Width    =    800;
     int Height   =    800;
-    int Margin   =     50;
+    int Margin   =     60;
     int Top      = Margin/2 + 20 * NUM_SORTS;
     int Bottom   = Height - Margin;
     int Left     = Margin;
@@ -227,7 +222,7 @@ int GraphLogarithmic( const char* DataFileName )
         double X = pow( 10,i );
 
         fprintf( svg, "<line x1=\"%.2f\" y1=\"%d\" x2=\"%.2f\" y2=\"%d\" stroke=\"black\" stroke-width=\"0.25\" />\n", x, Top, x, Bottom + 5 );
-        fprintf( svg, "<text x=\"%.2f\" y=\"%d\" font-size=\"12\" text-anchor=\"middle\">%d</text>\n", x, Bottom + 15, ( int ) X );
+        fprintf( svg, "<text x=\"%.2f\" y=\"%d\" font-size=\"16\" text-anchor=\"middle\">%d</text>\n", x, Bottom + 15, ( int ) X );
 
         for ( int tenths = 1; tenths <= 9; tenths++ )
         {
@@ -247,7 +242,7 @@ int GraphLogarithmic( const char* DataFileName )
         double Y = pow( 10,j );
 
         fprintf( svg, "<line x1=\"%d\" y1=\"%.2f\" x2=\"%d\" y2=\"%.2f\" stroke=\"black\" stroke-width=\"0.25\" />\n", Left - 5, y, Right, y );
-        fprintf( svg, "<text x=\"%d\" y=\"%.2f\" font-size=\"12\" text-anchor=\"end\">%d</text>\n", Left - 10, y, ( int ) Y );
+        fprintf( svg, "<text x=\"%d\" y=\"%.2f\" font-size=\"16\" text-anchor=\"end\">%d</text>\n", Left - 10, y, ( int ) Y );
 
         for ( int tenths = 1; tenths <= 9; tenths++ )
         {
@@ -261,7 +256,7 @@ int GraphLogarithmic( const char* DataFileName )
 
 
     //  Add the title.
-    fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"28\" text-anchor=\"start\">%s</text>\n", Margin*2, Margin     , "Logarithmic Comparison" );
+    fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"28\" text-anchor=\"start\">%s</text>\n", Margin*2, Margin     , "Logarithmic Speed Comparison" );
     fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"28\" text-anchor=\"start\">%s</text>\n", Margin*2, Margin + 35, "of Sort Routines" );
 
 
@@ -271,7 +266,7 @@ int GraphLogarithmic( const char* DataFileName )
         int x = Right - 200;
         int y = Margin/2 + 20 * s;
         fprintf( svg, "<circle cx=\"%d\" cy=\"%d\" r=\"6\" fill=\"%s\" fill-opacity=\"1.0\" />\n", x, y-3, SortColors[s] );
-        fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"14\" text-anchor=\"start\">%s</text>\n", x + 12, y, SortNames[s] );
+        fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"16\" text-anchor=\"start\">%s</text>\n", x + 12, y, SortNames[s] );
     }
 
 
@@ -297,16 +292,16 @@ int GraphLogarithmic( const char* DataFileName )
             //  Draw the data point.
 
             const char* color = SortColors[Sort];
-            if ( SortSize     <=  1              ) { color = "red"; SortSize     = 1; }
-            if ( Microseconds <=  1              ) { color = "red"; Microseconds = 1; }
-            if ( SortSize     >  MaxSortSize     ) { color = "red"; SortSize     = MaxSortSize; }
-            if ( Microseconds >  MaxMicroseconds ) { color = "red"; Microseconds = MaxMicroseconds; }
+            if ( SortSize     <=  1              ) { color = "#888888"; SortSize     = 1; }
+            if ( Microseconds <=  1              ) { color = "#888888"; Microseconds = 1; }
+            if ( SortSize     >  MaxSortSize     ) { color = "#888888"; SortSize     = MaxSortSize; }
+            if ( Microseconds >  MaxMicroseconds ) { color = "#888888"; Microseconds = MaxMicroseconds; }
 
             double x = Left   + log10( SortSize     ) * ScaleX;
             double y = Bottom - log10( Microseconds ) * ScaleY;
             fprintf( svg, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"3\" fill=\"%s\" fill-opacity=\"0.5\" />\n", x, y, color );
 
-            if ( xOld && strcmp( color, "red" ) )
+            if ( xOld && strcmp( color, "#888888" ) )
             {
                 fprintf( svg, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"%s\" stroke-width=\"1\" />\n", xOld, yOld, x, y, color );
             }
@@ -338,7 +333,7 @@ int GraphLinear( const char* DataFileName )
     // Define some SVG graph constants.
     int Width    =    800;
     int Height   =    800;
-    int Margin   =     50;
+    int Margin   =     60;
     int Top      = Margin/2 + 20 * NUM_SORTS;
     int Bottom   = Height - Margin;
     int Left     = Margin;
@@ -385,7 +380,7 @@ int GraphLinear( const char* DataFileName )
         double X = i;
 
         fprintf( svg, "<line x1=\"%.2f\" y1=\"%d\" x2=\"%.2f\" y2=\"%d\" stroke=\"black\" stroke-width=\"0.25\" />\n", x, Top, x, Bottom + 5 );
-        fprintf( svg, "<text x=\"%.2f\" y=\"%d\" font-size=\"12\" text-anchor=\"middle\">%d</text>\n", x, Bottom + 15, ( int ) X );
+        fprintf( svg, "<text x=\"%.2f\" y=\"%d\" font-size=\"16\" text-anchor=\"middle\">%d</text>\n", x, Bottom + 15, ( int ) X );
     }
 
 
@@ -397,7 +392,7 @@ int GraphLinear( const char* DataFileName )
 
         fprintf( svg, "<line x1=\"%d\" y1=\"%.2f\" x2=\"%d\" y2=\"%.2f\" stroke=\"black\" stroke-width=\"0.25\" />\n", Left - 5, y, Right, y );
         if ( j > MaxMicroseconds/10 )
-            fprintf( svg, "<text x=\"%d\" y=\"%.2f\" font-size=\"12\" text-anchor=\"end\">%d</text>\n", Left - 10, y, ( int ) Y );
+            fprintf( svg, "<text x=\"%d\" y=\"%.2f\" font-size=\"16\" text-anchor=\"end\">%d</text>\n", Left - 10, y, ( int ) Y );
 
         for ( int tenths = 1; tenths <= 9; tenths++ )
         {
@@ -411,7 +406,7 @@ int GraphLinear( const char* DataFileName )
 
 
     //  Add the title.
-    fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"28\" text-anchor=\"start\">%s</text>\n", Margin*2, Margin     , "Linear Comparison" );
+    fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"28\" text-anchor=\"start\">%s</text>\n", Margin*2, Margin     , "Linear Speed Comparison" );
     fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"28\" text-anchor=\"start\">%s</text>\n", Margin*2, Margin + 35, "of Sort Routines" );
 
 
@@ -421,7 +416,7 @@ int GraphLinear( const char* DataFileName )
         int x = Right - 200;
         int y = Margin/2 + 20 * s;
         fprintf( svg, "<circle cx=\"%d\" cy=\"%d\" r=\"6\" fill=\"%s\" fill-opacity=\"1.0\" />\n", x, y-3, SortColors[s] );
-        fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"14\" text-anchor=\"start\">%s</text>\n", x + 12, y, SortNames[s] );
+        fprintf( svg, "<text x=\"%d\" y=\"%d\" font-size=\"16\" text-anchor=\"start\">%s</text>\n", x + 12, y, SortNames[s] );
     }
 
 
@@ -447,16 +442,16 @@ int GraphLinear( const char* DataFileName )
             //  Draw the data point.
 
             const char* color = SortColors[Sort];
-            if ( SortSize     <=  1              ) { color = "red"; SortSize     = 1; }
-            if ( Microseconds <=  1              ) { color = "red"; Microseconds = 1; }
-            if ( SortSize     >  MaxSortSize     ) { color = "red"; SortSize     = MaxSortSize; }
-            if ( Microseconds >  MaxMicroseconds ) { color = "red"; Microseconds = MaxMicroseconds; }
+            if ( SortSize     <=  1              ) { color = "#888888"; SortSize     = 1; }
+            if ( Microseconds <=  1              ) { color = "#888888"; Microseconds = 1; }
+            if ( SortSize     >  MaxSortSize     ) { color = "#888888"; SortSize     = MaxSortSize; }
+            if ( Microseconds >  MaxMicroseconds ) { color = "#888888"; Microseconds = MaxMicroseconds; }
 
             double x = Left   + SortSize * ScaleX;
             double y = Bottom - Microseconds * ScaleY;
             fprintf( svg, "<circle cx=\"%.2f\" cy=\"%.2f\" r=\"3\" fill=\"%s\" fill-opacity=\"0.5\" />\n", x, y, color );
 
-            if ( xOld && strcmp( color, "red" ) )
+            if ( xOld && strcmp( color, "#888888" ) )
             {
                 fprintf( svg, "<line x1=\"%.2f\" y1=\"%.2f\" x2=\"%.2f\" y2=\"%.2f\" stroke=\"%s\" stroke-width=\"1\" />\n", xOld, yOld, x, y, color );
             }
@@ -480,8 +475,8 @@ int GraphLinear( const char* DataFileName )
 
 int main( )
 {
-    GraphLogarithmic ( "..\\TestSpeed\\Results_2025-01-22_13-46.txt" );
-    GraphLinear      ( "..\\TestSpeed\\Results_2025-01-22_13-46.txt" );
+    GraphLogarithmic ( "../TestSpeed/Results_2025-03-07_16-49.txt" );
+    GraphLinear      ( "../TestSpeed/Results_2025-03-07_16-49.txt" );
 
     return 0;
 }
