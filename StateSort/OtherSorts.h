@@ -7,10 +7,9 @@
 
 void BubbleSort( SORT_ELEMENT* V, int NumElements )
 {
-    bool Swapped;
-    for ( int Range = NumElements-1; Range > 1; Range-- )
+    for ( int Range = NumElements-1; Range > 0; Range-- )
     {
-        Swapped = false;
+        bool Swapped = false;
 
         for ( int i = 0; i < Range; i++ )
         {
@@ -54,8 +53,7 @@ void SelectionSort( SORT_ELEMENT* V, int NumElements )
 
 void ShellSort( SORT_ELEMENT* V, int NumElements )
 {
-////for ( int Gap = NumElements / 2; Gap; Gap /= 2 )
-    for ( int Gap = NumElements / 2; Gap; Gap = Gap == 2 ? 1 : ( int)( Gap / 2.2 ) )
+    for ( int Gap = NumElements / 2; Gap; Gap = Gap == 2 ? 1 : Gap / 2.2 )
     {
         for( int i = Gap; i < NumElements; i++ )
         {
@@ -115,61 +113,6 @@ void HeapSort( SORT_ELEMENT* V, int NumElements )
 
 //////////////////////////////////////////////////////////////////////
 
-//  Lomuto’s QuickSort
-
-//--------------------------------------------------------------------
-//
-//int LomutosPartition( SORT_ELEMENT* V, int Beg, int End )
-//{
-//    SORT_ELEMENT Pivot = V[End];
-//    int i = Beg-1;
-//
-//    for ( int j = Beg; j < End; j++ )
-//    {
-//        if ( V[j] <= Pivot )
-//        {
-//            i++;
-//            SORT_ELEMENT Swap = V[i]; V[i] = V[j]; V[j] = Swap;
-//        }
-//    }
-//    SORT_ELEMENT Swap = V[i+1]; V[i+1] = V[End]; V[End] = Swap;
-//    return i+1;
-//}
-//
-//--------------------------------------------------------------------
-
-int LomutosPartition( SORT_ELEMENT* V, int Beg, int End )
-{
-    SORT_ELEMENT Pivot = V[End];
-    int i = Beg;
-
-    for ( int j = Beg; j < End; j++ )
-    {
-        if ( V[j] <= Pivot )
-        {
-            SORT_ELEMENT Swap = V[i]; V[i] = V[j]; V[j] = Swap;
-            i++;
-        }
-    }
-    SORT_ELEMENT Swap = V[i]; V[i] = V[End]; V[End] = Swap;
-    return i;
-}
-
-//--------------------------------------------------------------------
-
-void LomutosQuickSort( SORT_ELEMENT* V, int Beg, int End )
-{
-    if ( Beg < End )
-    {
-        int Pivot = LomutosPartition( V, Beg, End );
-
-        LomutosQuickSort( V, Beg, Pivot-1      );
-        LomutosQuickSort( V,      Pivot+1, End );
-    }
-}
-
-//////////////////////////////////////////////////////////////////////
-
 //  Hoare’s QuickSort
 
 //--------------------------------------------------------------------
@@ -205,6 +148,42 @@ void HoaresQuickSort( SORT_ELEMENT* V, int Beg, int End )
 
 //////////////////////////////////////////////////////////////////////
 
+//  Lomuto’s QuickSort
+
+//--------------------------------------------------------------------
+
+int LomutosPartition( SORT_ELEMENT* V, int Beg, int End )
+{
+    SORT_ELEMENT Pivot = V[End];
+    int i = Beg;
+
+    for ( int j = Beg; j < End; j++ )
+    {
+        if ( V[j] <= Pivot )
+        {
+            SORT_ELEMENT Swap = V[i]; V[i] = V[j]; V[j] = Swap;
+            i++;
+        }
+    }
+    SORT_ELEMENT Swap = V[i]; V[i] = V[End]; V[End] = Swap;
+    return i;
+}
+
+//--------------------------------------------------------------------
+
+void LomutosQuickSort( SORT_ELEMENT* V, int Beg, int End )
+{
+    if ( Beg < End )
+    {
+        int Pivot = LomutosPartition( V, Beg, End );
+
+        LomutosQuickSort( V, Beg, Pivot-1      );
+        LomutosQuickSort( V,      Pivot+1, End );
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+
 //  HybridMergeSort
 
 //--------------------------------------------------------------------
@@ -212,7 +191,6 @@ void HoaresQuickSort( SORT_ELEMENT* V, int Beg, int End )
 static inline int intLogBase2( int n )
 {
     int r = 0;
-//    if ( n >> 32 ) { r += 32; n >>= 32; }
     if ( n >> 16 ) { r += 16; n >>= 16; }
     if ( n >>  8 ) { r +=  8; n >>=  8; }
     if ( n >>  4 ) { r +=  4; n >>=  4; }
@@ -289,7 +267,7 @@ static inline void hybridMergeSort( SORT_ELEMENT* Fm, SORT_ELEMENT* To, int NumE
             if ( iEnd > NumElements ) iEnd = NumElements;
             merge(Fm, To, iBeg, iMid, iEnd);
         }
-        register SORT_ELEMENT* Swap = Fm; Fm = To; To = Swap;
+        SORT_ELEMENT* Swap = Fm; Fm = To; To = Swap;
     }
 }
 
