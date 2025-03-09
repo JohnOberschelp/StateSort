@@ -1,7 +1,7 @@
 
 //        BSD 3-Clause License
 //
-//        Copyright (c) 2024, John Oberschelp
+//        Copyright (c) 2024-2025, John Oberschelp
 //
 //        Redistribution and use in source and binary forms, with or without
 //        modification, are permitted provided that the following conditions are met:
@@ -121,9 +121,10 @@ int main( )
 
     char NumElementsBuffer[32];
     char* NumElementsString = IntWithSeperators( NumElementsBuffer, NumElements );
-    printf( "Number of Compares and Number of Copies Used by Various Sorts \n" );
+    printf( "\nNumber of Compares and Number of Copies Used by Various Sorts\n\n" );
     printf( "Sorting %s Elements, Using std::mt19937 Seeded to 0\n\n", NumElementsString );
-    printf( "                             Compares          Copies\n" );
+    printf( "                            Compares          Copies\n" );
+    printf( "                            --------          ------\n" );
 
 
     MersenneTwister.seed(0);
@@ -157,15 +158,15 @@ int main( )
     MersenneTwister.seed(0);
     for ( int e = 0; e < NumElements; e++ ) V[e] = MersenneTwister() % NumElements;
     ElementCompares = ElementCopies = 0;
-    LomutosQuickSort( V, 0, NumElements-1 );
-    PrintRow( "LomutosQuickSort" );
+    HoaresQuickSort( V, 0, NumElements-1 );
+    PrintRow( "HoaresQuickSort" );
 
 
     MersenneTwister.seed(0);
     for ( int e = 0; e < NumElements; e++ ) V[e] = MersenneTwister() % NumElements;
     ElementCompares = ElementCopies = 0;
-    HoaresQuickSort( V, 0, NumElements-1 );
-    PrintRow( "HoaresQuickSort" );
+    LomutosQuickSort( V, 0, NumElements-1 );
+    PrintRow( "LomutosQuickSort" );
 
 
     MersenneTwister.seed(0);

@@ -1,7 +1,7 @@
 
 //        BSD 3-Clause License
 //
-//        Copyright (c) 2024, John Oberschelp
+//        Copyright (c) 2024-2025, John Oberschelp
 //
 //        Redistribution and use in source and binary forms, with or without
 //        modification, are permitted provided that the following conditions are met:
@@ -87,14 +87,13 @@ int main( )
 {
     std::mt19937 MersenneTwister( 0 );
 
-    int MaxNumElements = 500;
+    int MaxNumElements = 1000;
 
     Element* GoldSortArray = ( Element* ) malloc( MaxNumElements * sizeof( Element ) );
     Element* TestSortArray = ( Element* ) malloc( MaxNumElements * sizeof( Element ) );
     assert( GoldSortArray );
     assert( TestSortArray );
     const char* Name = 0;
-
 
     for ( int WhichSort = 0; WhichSort < 8; WhichSort++ )
     {
@@ -125,8 +124,8 @@ int main( )
               case 1: Name = "SelectionSort"    ; SelectionSort    ( TestSortArray, NumElements ); break;
               case 2: Name = "ShellSort"        ; ShellSort        ( TestSortArray, NumElements ); break;
               case 3: Name = "HeapSort"         ; HeapSort         ( TestSortArray, NumElements ); break;
-              case 4: Name = "LomutosQuickSort" ; LomutosQuickSort ( TestSortArray, 0, NumElements-1 ); break;
-              case 5: Name = "HoaresQuickSort"  ; HoaresQuickSort  ( TestSortArray, 0, NumElements-1 ); break;
+              case 4: Name = "HoaresQuickSort"  ; HoaresQuickSort  ( TestSortArray, 0, NumElements-1 ); break;
+              case 5: Name = "LomutosQuickSort" ; LomutosQuickSort ( TestSortArray, 0, NumElements-1 ); break;
               case 6: Name = "HybridMergeSort"  ; HybridMergeSort  ( TestSortArray, NumElements, 0  ); break;
               case 7: Name = "StateSort"        ; StateSort        ( TestSortArray, NumElements, 0  ); break;
             }
@@ -148,6 +147,9 @@ int main( )
 
     free( GoldSortArray );
     free( TestSortArray );
+
+    printf( "(Press a key)\n" );
+    getchar();
 
     return 0;
 }

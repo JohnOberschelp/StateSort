@@ -1,7 +1,7 @@
 
 //        BSD 3-Clause License
 //
-//        Copyright (c) 2024, John Oberschelp
+//        Copyright (c) 2024-2025, John Oberschelp
 //
 //        Redistribution and use in source and binary forms, with or without
 //        modification, are permitted provided that the following conditions are met:
@@ -37,7 +37,7 @@
 #include "../../StateSort/StateSort.h"
 #include "../../StateSort/OtherSorts.h"
 
-#pragma warning( disable:  4996 )  //  unsafe str tok
+#pragma warning( disable: 4996 )  //  unsafe str tok
 
 //////////////////////////////////////////////////////////////////////
 
@@ -47,25 +47,19 @@ const char* SortNames[] = {
     "HeapSort",
     "ShellSort",
     "MergeSort",
-    "std::sort", 
+    "StateSort",
     "std::stable_sort",
-    "StateSort", 0 };
+    "std::sort",
+};
 
 typedef enum {
     HEAP_SORT       = 0,
     SHELL_SORT      = 1,
     MERGE_SORT      = 2,
-    STD_SORT        = 3,
+    STATE_SORT      = 3,
     STD_STABLE_SORT = 4,
-    STATE_SORT      = 5,
+    STD_SORT        = 5,
 } SORT_TYPE ; 
-
-
-const char* SortColors[] = {
-    "purple",
-    "blue",
-    "orange",
-    "green", 0 };
 
 //////////////////////////////////////////////////////////////////////
 
@@ -90,9 +84,7 @@ int NumElementsForStep[102];
 
 double usMinimums[NUM_SORTS][NUM_DATA_ARRANGEMENTS][102];
 
-//////////////////////////////////////////////////////////////////////
-
-LARGE_INTEGER TicksPerSec, Start, Stop; 
+LARGE_INTEGER TicksPerSec;
 
 //////////////////////////////////////////////////////////////////////
 
@@ -104,6 +96,7 @@ static double TimeASort( SORT_TYPE SortType, SORT_ELEMENT* Vin, int NumElements,
     double NumMicrosecondsForTimedTesting = ApproxNumSecondsToTest * ( 0.9 * 1'000'000 );
 
     SORT_ELEMENT* V = new SORT_ELEMENT[NumElements];
+    LARGE_INTEGER Start, Stop; 
 
     QueryPerformanceCounter( &Start );
 
@@ -114,13 +107,13 @@ static double TimeASort( SORT_TYPE SortType, SORT_ELEMENT* Vin, int NumElements,
         for ( int e = 0; e < NumElements; e++ ) V[e] = Vin[e];
         switch ( SortType )
         {
-          case HEAP_SORT       :  HeapSort         ( V, NumElements    ); break;
-          case SHELL_SORT      :  ShellSort        ( V, NumElements    ); break;
-          case MERGE_SORT      :  HybridMergeSort  ( V, NumElements, 0 ); break;
-          case STD_SORT        :  std::sort        ( V, V+NumElements  ); break;
-          case STD_STABLE_SORT :  std::stable_sort ( V, V+NumElements  ); break;
-          case STATE_SORT      :  StateSort        ( V, NumElements, 0 ); break;
-          default              :  DebugBreak( );
+          case HEAP_SORT         :  HeapSort         ( V, NumElements    ); break;
+          case SHELL_SORT        :  ShellSort        ( V, NumElements    ); break;
+          case MERGE_SORT        :  HybridMergeSort  ( V, NumElements, 0 ); break;
+          case STATE_SORT        :  StateSort        ( V, NumElements, 0 ); break;
+          case STD_STABLE_SORT   :  std::stable_sort ( V, V+NumElements  ); break;
+          case STD_SORT          :  std::sort        ( V, V+NumElements  ); break;
+          default                :  DebugBreak( );
         }
 
         QueryPerformanceCounter( &Stop );
@@ -154,13 +147,13 @@ static double TimeASort( SORT_TYPE SortType, SORT_ELEMENT* Vin, int NumElements,
     {
         switch ( SortType )
         {
-          case HEAP_SORT       :  HeapSort         ( V, NumElements    ); break;
-          case SHELL_SORT      :  ShellSort        ( V, NumElements    ); break;
-          case MERGE_SORT      :  HybridMergeSort  ( V, NumElements, 0 ); break;
-          case STD_SORT        :  std::sort        ( V, V+NumElements  ); break;
-          case STD_STABLE_SORT :  std::stable_sort ( V, V+NumElements  ); break;
-          case STATE_SORT      :  StateSort        ( V, NumElements, 0 ); break;
-          default              :  DebugBreak( );
+          case HEAP_SORT         :  HeapSort         ( V, NumElements    ); break;
+          case SHELL_SORT        :  ShellSort        ( V, NumElements    ); break;
+          case MERGE_SORT        :  HybridMergeSort  ( V, NumElements, 0 ); break;
+          case STATE_SORT        :  StateSort        ( V, NumElements, 0 ); break;
+          case STD_STABLE_SORT   :  std::stable_sort ( V, V+NumElements  ); break;
+          case STD_SORT          :  std::sort        ( V, V+NumElements  ); break;
+          default                :  DebugBreak( );
         }
     }
 
@@ -210,17 +203,11 @@ int main( )
 {
     QueryPerformanceFrequency( &TicksPerSec );
 
-    ////  0.01 and 1 will take about 30 seconds.
-    //double ApproxNumSecondsPerTest = 0.01;
-    //int    NumTimesToRepeatTest    = 1;
-
-    ////  0.01 and 10 will take about 6 minutes.
-    //double ApproxNumSecondsPerTest = 0.01;
-    //int    NumTimesToRepeatTest    = 10;
-
-    //  0.05 and 50 will take about 150 minutes.
-    double ApproxNumSecondsPerTest = 0.05;
-    int    NumTimesToRepeatTest    = 50;
+    //  0.01 and 1 will take about 30 seconds.
+    //  0.01 and 10 will take about 6 minutes.
+    //  0.05 and 50 will take about 145 minutes.
+    double ApproxNumSecondsPerTest = 0.1;
+    int    NumTimesToRepeatTest    = 20;
 
     char FileName[256];
     SYSTEMTIME LocalTime;
@@ -240,7 +227,7 @@ int main( )
 
 
     //  Repeat, keeping the minimum.
-    LARGE_INTEGER StartOfRepeat, StopOfRepeat;
+    LARGE_INTEGER Start, Stop;
     for ( int r = 0; r < NumTimesToRepeatTest; r++ )
     {
 
@@ -248,12 +235,12 @@ int main( )
 
         if ( ! r )
         {
-            QueryPerformanceCounter( &StartOfRepeat );
+            QueryPerformanceCounter( &Start );
         }
         else
         {
-            QueryPerformanceCounter( &StopOfRepeat );
-            double MicrosecondsSoFar = ( double )( StopOfRepeat.QuadPart - StartOfRepeat.QuadPart ) * 1'000'000.0 / TicksPerSec.QuadPart;
+            QueryPerformanceCounter( &Stop );
+            double MicrosecondsSoFar = ( double )( Stop.QuadPart - Start.QuadPart ) * 1'000'000.0 / TicksPerSec.QuadPart;
             double MicrosecondsLeft = MicrosecondsSoFar / r * ( NumTimesToRepeatTest - r );
             printf( "                                                     "
                     " About %.2f minutes left.", MicrosecondsLeft / 1'000'000.0 / 60.0 );
