@@ -1,50 +1,83 @@
+
 #include <algorithm>
 #include <chrono>
-#include <float.h>
 #include <stdio.h>
+#include <vector>
+//#include <boost/range/algorithm.hpp>
 
 #define SORT_ELEMENT  int
 #include "StateSort.h"
 
 #define DURATION std::chrono::duration_cast<std::chrono::duration<float>>
 typedef std::chrono::steady_clock Clock;
-uint32_t minstd_rand() { static uint64_t x = 1; return (x = (x * 48271) % 2147483647); }
 
 int main( )
 {
-    int NumElements = 1'000'000;
-    int NumTests    = 100;
+    const int NumElements = 1'000'000;
 
-    int* Array = new int[NumElements];
+    SORT_ELEMENT* Array = new SORT_ELEMENT[NumElements];
+    std::vector<int> Vector( NumElements );
 
-    double S[2] = { DBL_MAX, DBL_MAX };  //  best time per algorithm in seconds
 
-    printf( "Minimum Seconds Sorting %d Elements Over %d Tests\n\n", NumElements, NumTests );
+    double TotalSeconds[2] = { 0, 0 };
 
-    for ( int Test = 1; Test <= NumTests; Test++ )
+    printf( "\nAverage Seconds To Sort %d Random Integers\n\n", NumElements );
+    printf( "Press control-c to stop.\n\n" );
+    printf( "Num Races      StateSort                           std::stableSort\n" );
+////printf( "Num Races      StateSort                           std::sort\n" );
+////printf( "Num Races      StateSort                           boost::range::stable_sort\n" );
+////printf( "Num Races      StateSort                           boost::range::sort\n" );
+    printf( "---------      -----------------------------       -----------------------------\n" );
+
+    for ( int Race = 1;; Race++ )
     {
-        //  Randomize the array.
-        for ( int e = 0; e < NumElements; e++ ) Array[e] = minstd_rand() % NumElements;
 
-        //  Try for a new minimum time for one or the other sort.
-        int WhichSort = minstd_rand() & 1;
-        Clock::time_point Start = Clock::now();
+        for ( int WhichSort = 0; WhichSort < 2; WhichSort++ )
+        {
+            //  Randomize the data.
+            for ( int i = 0; i < NumElements; i++ ) Array[i] = Vector[i] = rand() % NumElements;
 
-        if ( WhichSort == 0 ) std::stable_sort( Array, Array+NumElements );
-        else                  StateSort( Array, NumElements, 0 );
 
-        Clock::duration D = Clock::now() - Start;
-        float Seconds = ( DURATION( D ) ).count();
-        if ( Seconds < S[ WhichSort ] ) S[ WhichSort ] = Seconds;
+            //  Delay a random amount, hoping to average out the effects of
+            //  timer granularity and interrupt regularity.
+            int Delay = rand() & 0xFFFF;
+            for ( int i = 0; i < Delay; i++ ) if ( Race < 0 ) Race++;
+
+            Clock::time_point Start = Clock::now();
+
+            switch ( WhichSort )
+            {
+                case  0: StateSort        ( Array, NumElements, 0 ); break;
+                case  1: std::stable_sort ( Array, Array+NumElements ); break;
+////////////////case  1: std::sort        ( Array, Array+NumElements ); break;
+////////////////case  1: boost::range::stable_sort( Vector ); break;
+////////////////case  1: boost::range::sort( Vector ); break;
+            }
+
+            Clock::duration D = Clock::now() - Start;
+            double Seconds = ( DURATION( D ) ).count();
+            TotalSeconds[WhichSort] += Seconds;
+        }
+
+        //  Only print every 10th time, hoping to reduce the effect of
+        //  interrupts due to printing.
+        if ( Race % 10 == 0 )
+        {
+            double S0 = TotalSeconds[0] / Race;
+            double S1 = TotalSeconds[1] / Race;
+            if ( S0 < S1 )
+            {
+                printf( "%8d:  %6d%% faster at %7.4f seconds   %6d%% slower at %7.4f seconds\n",
+                    Race, (int)((S1-S0)*100/S1), S0, (int)((S1-S0)*100/S0), S1 );
+            }
+            else
+            {
+                printf( "%8d:  %6d%% slower at %7.4f seconds   %6d%% faster at %7.4f seconds\n",
+                    Race, (int)((S0-S1)*100/S1), S0, (int)((S0-S1)*100/S0), S1 );
+            }
+        }
+
     }
-
-    printf( "%18s   %18s\n\n", "std::stable_sort", "StateSort" );
-    printf( "%18.5f   %18.5f\n\n", S[0], S[1] );
-    if ( S[0] == S[1] ) printf( "%18s   %18s\n", "Tie!", "Tie!" );
-    if ( S[0] <  S[1] ) printf( "%*s%8.2f%% faster!\n",  7, "", 100*(S[1]-S[0])/S[0] );
-    if ( S[0] >  S[1] ) printf( "%*s%8.2f%% faster!\n", 28, "", 100*(S[0]-S[1])/S[1] );
-
-    delete[] Array;
 
     return 0;
 }
